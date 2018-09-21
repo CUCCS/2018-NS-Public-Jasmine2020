@@ -1,7 +1,7 @@
 ##无线网卡图片及配置##
 ![无线网卡图片1](https://i.imgur.com/chjoIqI.jpg)![无线网卡图片2](https://i.imgur.com/rnuV5Pl.jpg)
 
-**code**
+```
 
 root@kali:~# iw phy
 Wiphy phy0
@@ -207,5 +207,5 @@ Wiphy phy0
     Driver supports full state transitions for AP/GO clients
     Driver supports a userspace MPM
     Device supports configuring vdev MAC-addr on create.
-
+```
 
