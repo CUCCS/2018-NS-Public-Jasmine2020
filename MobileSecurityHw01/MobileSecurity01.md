@@ -1,5 +1,6 @@
 ## 无线网卡图片及配置
-![无线网卡图片1](https://i.imgur.com/chjoIqI.jpg)![无线网卡图片2](https://i.imgur.com/rnuV5Pl.jpg)
+![无线网卡图片1](https://i.imgur.com/chjoIqI.jpg)
+![无线网卡图片2](https://i.imgur.com/rnuV5Pl.jpg)
 
 ```
 
