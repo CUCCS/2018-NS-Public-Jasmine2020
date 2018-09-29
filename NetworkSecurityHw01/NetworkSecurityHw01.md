@@ -114,8 +114,8 @@ iptables -t nat -A POSTROUTING　-s 192.168.56.0/24 -o eth0 -j  MASQUERADE
 
 **四.实验结果**
 
-*靶机主机名：dragon 地址：192.168.56.101*
-*攻击机主机名：localhost 地址：10.0.2.15*
+*靶机主机名：dragon 地址：192.168.56.101*<br>
+*攻击机主机名：localhost 地址：10.0.2.15*<br>
 *网关主机名：kali 网卡一地址：10.0.2.5
 网卡二地址：192.168.56.103*
 
@@ -129,7 +129,7 @@ iptables -t nat -A POSTROUTING　-s 192.168.56.0/24 -o eth0 -j  MASQUERADE
 ![gateway](https://i.imgur.com/aZNPDS7.png)
 
 - 靶机的所有对外上下行流量必须经过网关
-- 所有节点均可以访问互联网
+- 所有节点均可以访问互联网<br>
 -攻击机
 
 ![attackpingbaidu](https://i.imgur.com/7N85fCG.png)
