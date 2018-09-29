@@ -20,35 +20,53 @@
 1.首先为三个节点配置网卡如下：
 攻击机——kali-attack
 ![attack](https://i.imgur.com/aPEHClQ.png)
+
 只有一块网卡，使用NAT网络接入
+
 ![IPaddress](https://i.imgur.com/G3ZZeOP.png)
+
 已知attack的ip地址是10.0.2.15/24，默认网关的IP地址是10.0.2.1/24
 
 靶机——kali-victim
+
 ![victim](https://i.imgur.com/63Ab6UI.png)
+
 只有一块网卡，使用host-only接入
+
 ![IPaddress](https://i.imgur.com/LVDX7h3.png)
+
 已知victim的ip地址是192.168.56.101/24,默认网关的IP地址是
 
 网关
+
 ![gateway1](https://i.imgur.com/6ft31UQ.png)
+
 第一块网卡，使用NAT网络接入，与攻击机在同一网络
+
 ![gateway2](https://i.imgur.com/dCz1g2g.png)
+
 第二块网卡，使用host-only接入，与靶机在同一网络
+
 ![gateway](https://i.imgur.com/t7squ7t.png)
+
 已知gateway网卡一的IP地址为10.0.2.5/24，网卡二的IP地址为192.168.56.103/24
 
 此时进行发包测试，发现两台主机与网关可以相互ping通，靶机不能ping通攻击机，但攻击机可以ping通靶机。
+
 ![attackpingvictim](https://i.imgur.com/IB9I9TZ.png)
 
 2.当攻击机ping靶机时，监听靶机，发现靶机收到的包来自地址192.168.56.1
 ![victimlisten](https://i.imgur.com/RusUwLI.png)
+
 研究发现192.168.56.1是宿主机host-only网卡的IP地址
+
 ![hostonly](https://i.imgur.com/xeYatCs.png)
+
 即攻击机发出去的包通过宿主机传递给了靶机
 
 在靶机上配置iptables防火墙规则，增加一条——所有源地址为攻击地址10.0.2.15的input包全部采取动作drop
 ![victimdrop](https://i.imgur.com/1vRKJJV.png)
+
 再次通过攻击机来ping靶机，发现已经是主机不可达了
 ![attckpingno](https://i.imgur.com/4iSiJ0l.png)
 
@@ -96,30 +114,40 @@ iptables -t nat -A POSTROUTING　-s 192.168.56.0/24 -o eth0 -j  MASQUERADE
 
 **四.实验结果**
 
-*靶机主机名：dragon 地址：192.168.56.101
-攻击机主机名：localhost 地址：10.0.2.15
-网关主机名：kali 网卡一地址：10.0.2.5
+*靶机主机名：dragon 地址：192.168.56.101*
+*攻击机主机名：localhost 地址：10.0.2.15*
+*网关主机名：kali 网卡一地址：10.0.2.5
 网卡二地址：192.168.56.103*
 
-- 靶机可以直接访问攻击者主机
-![victimpingattack](https://i.imgur.com/Uujex07.png)
-- 攻击者主机无法直接访问靶机
+- 靶机可以直接访问攻击者主机<br>
+![victimpingattack](https://i.imgur.com/r8iiVEk.png)
+
+- 攻击者主机无法直接访问靶机<br>
 ![](https://i.imgur.com/erkvsVa.png)
-- 网关可以直接访问攻击者主机和靶机
+
+- 网关可以直接访问攻击者主机和靶机<br>
 ![gateway](https://i.imgur.com/aZNPDS7.png)
+
 - 靶机的所有对外上下行流量必须经过网关
 - 所有节点均可以访问互联网
 -攻击机
+
 ![attackpingbaidu](https://i.imgur.com/7N85fCG.png)
+
 -靶机
+
 ![victimpingbaidu](https://i.imgur.com/wFdqIWU.png)
+
 -网关
+
 ![gatewaypingbaidu](https://i.imgur.com/4hTAO3q.png)
 
 **五.实验拓扑结构图**
+
 ![](https://i.imgur.com/s9K89qt.png)
 
 **六.实验收获**
+
 1.靶机的hostonly网卡由于借用了宿主机的网卡，如果宿主机可以上网，靶机应该可以借助宿主机直接上网，但在开始做实验时，用靶机ping外网时发现反馈信息不是host unreachable而是网络不可达，通过搜索资料之后，配置了靶机与宿主机一致的默认dns地址，并同时配置了route路由表具体过程如下
 添加默认网关：
 ```
@@ -132,6 +160,7 @@ vim /etc/resolv.cnf
 nameserver 192.168.1.1
 ```
 注：192.168.1.1 和windows上的dns服务器要一致。
+
 ![dns](https://i.imgur.com/ug5HlMg.png)
 
 2.虚拟机网卡未正常开启，因为内存不足无法正常用图形界面配置网卡的IP地址，可以用终端命令行手动配置开启网卡
