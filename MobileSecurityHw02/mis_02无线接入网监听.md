@@ -1,4 +1,4 @@
-#移动互联网安全
+#移动互联网安全<br>
 ###Chapter2 无线接入网监听
 ---
 
@@ -16,7 +16,7 @@ ifconfig
 ```
 iwconfig
 ```
-![](https://i.imgur.com/94wgGqq.png)
+![](https://i.imgur.com/cc0LfRx.png)
 - 在确保无线网卡的工作模式是managed，且Access Poit值为Not-Associated的情况下，命令行下查看附近无线网络的SSID
 ```
 iw dev wlan0 scan | grep SSID
@@ -74,8 +74,8 @@ airodump-ng wlan0mon --channel 13 -w saved --beacons --wps
 ![](https://i.imgur.com/asopqRO.png)
 
 ###二.实验背景
-802.11标准将所有的数据包分为3种:
 
+802.11标准将所有的数据包分为3种:
 
 1. 数据: 数据数据包的作用是用来携带更高层次的数据(如IP数据包，ISO7层协议)，它负责在工作站之间传输数据
 	- Data：wlan.fc.type_subtype == 0x20
@@ -139,6 +139,7 @@ airodump-ng wlan0mon --channel 13 -w saved --beacons --wps
 ---
 
 IEEE 802.11 WLAN标准由3种不同的数据包类型组成：管理，控制和数据。当您的无线网络接口处于monitor时，它允许网络接口捕获所有数据，即使数据不是针对您的特定接口也是如此。通常在managed模式下，网卡接口将自动丢弃定向到其他接口的数据包以及用于通过无线电波进行通信的管理和控制数据包。
+
 通常，所有接入点都在Beacon 帧中发送其SSID和其他信息。此Beacon Frames允许网络范围内的客户轻松发现它们。隐藏SSID是一种特殊配置，其中接入点不在Beacon帧中广播其SSID。因为借助这些设置。只有知道接入点SSID的以前的客户端才能连接到它。这种特殊配置以简单的方式从不了解真实SSID的新客户端隐藏了接入点网络。但这种配置并不能提供良好的安全性。 
 
 从捕捉到的包中过滤出所有的Beacon frames
@@ -161,6 +162,7 @@ tshark -r 20181002-01.cap -T fields -e wlan.sa -e wlan.ssid | sort -u | cat -v
   # sort -u 去除重复行
 ```
 ![](https://i.imgur.com/lgxmIRl.png)
+
 比对两个结果可知 抓包范围内有五个独立的SSID和一个隐藏SSID（广播的beacon，无回复Probe Response的隐藏SSID）
 
 - 哪些无线热点是加密/非加密的？加密方式是否可知？
@@ -182,6 +184,7 @@ tshark -r 20181002-01.cap -T fields -e wlan.sa -e wlan.ssid | sort -u | cat -v
 加密的方式可以通过wlan.fixed.auth.alg来进行判断
 - 0是OpenSystem，完全不认证也不加密，任何人都可以连到无线基地台使用网络
 - 1是SharedKey
+
 但筛选该字段后发现没有捕捉到可以判断热点加密方式的帧，因此无法判断各个热点是通过什么方式加密的
 <br>![](https://i.imgur.com/PpRw13i.png)
 
@@ -197,6 +200,7 @@ tshark -r 20181002-01.cap -T fields -e wlan.sa -e wlan.ssid | sort -u | cat -v
 手机端等STA会记录已经连接过的AP的SSID，同时在和AP建立连接请求服务的时候也会发送关联请求Association Request帧，AP(SSID)会回复关联响应Association Response来确认建立连接，因此可以通过Association Response帧判断手机端最终加入了哪些SSID
 ![](https://i.imgur.com/COIIKDV.png)
 如图可知，没有符合条件的捕捉帧，说明手机没有接入任何一个捕捉到的AP
+
 
 - SSID包含在哪些类型的802.11帧？
 ---
